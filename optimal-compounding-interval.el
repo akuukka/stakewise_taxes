@@ -1,7 +1,7 @@
 (require 'cl-lib)
 
 (defun compute-income (interest capital compound-interval compound-gas-fee)
-  "Computes stakewise total yearly income"
+  "Computes stakewise total annual income"
   (let ((rewards 0.0) (day 0) (compound-counter 0) (days-until-compound compound-interval))
     (while (< day 365)
       (setq rewards (+ rewards (* capital (/ interest 365.0))  ))
@@ -15,22 +15,20 @@
     (setq total (+ capital rewards))
     total))
 
-(compute-income 0.048 54 180 0.009)
-(compute-income 0.048 54 90 0.009)
-(compute-income 0.048 40 60 0.008)
-(compute-income 0.048 40 30 0.008)
-
 (defun compute-optimal-compound-interval (capital interest compound-gas-fee)
   "Computes optimal compound interval (days)."
-  (setq compound-interval 365)
-  (setq best-total -1.0)
-  (setq best-interval -1)
-  (while (> compound-interval 0)
-    (let ((total (compute-income interest capital compound-interval compound-gas-fee)))
-      (when (> total best-total)
-        (setq best-total total)
-        (setq best-interval compound-interval)))
-    (cl-decf compound-interval))
-  (list best-interval best-total))
+  (let ((compound-interval 365) (best-total -1.0) (best-interval -1))
+    (while (> compound-interval 0)
+      (let ((total (compute-income interest capital compound-interval compound-gas-fee)))
+        (when (> total best-total)
+          (setq best-total total)
+          (setq best-interval compound-interval)))
+      (cl-decf compound-interval))
+    (list best-interval best-total)))
 
-(compute-optimal-compound-interval 70 0.048 0.09)
+;; Example:
+;; 1000 ETH
+;; 5% APR
+;; Compound operation costs 0.01 ETH
+;; => optimal compound interval is 34 days (with that, you have 1051.049 ETH after 365 days)
+(compute-optimal-compound-interval 1000 0.05 0.01)
