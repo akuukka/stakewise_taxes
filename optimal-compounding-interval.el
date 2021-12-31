@@ -2,10 +2,7 @@
 
 (defun compute-income (interest capital compound-interval compound-gas-fee)
   "Computes stakewise total yearly income"
-  (let ((rewards 0.0))
-    (setq day 0)
-    (setq compound-counter 0)
-    (setq days-until-compound compound-interval)
+  (let ((rewards 0.0) (day 0) (compound-counter 0) (days-until-compound compound-interval))
     (while (< day 365)
       (setq rewards (+ rewards (* capital (/ interest 365.0))  ))
       (setq days-until-compound (- days-until-compound 1))
