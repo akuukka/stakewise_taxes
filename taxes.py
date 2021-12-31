@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
+"""
+taxes.py.
+
+Compute taxable income from Stakewise rewards exported .csv file.
+Uses CoinGeckoAPI.
+"""
+
+
 import sys
 import re
 import sqlite3
 import time
 import datetime
-from pycoingecko import CoinGeckoAPI # pip3 install pycoingecko
+from pycoingecko import CoinGeckoAPI  # pip3 install pycoingecko
 from requests.exceptions import HTTPError
 
 CURRENCY = "eur"
+
 
 def get_price(cg, db_con, day, month, year):
     date = "%d-%d-%d" % (day, month, year)
@@ -33,13 +42,16 @@ def get_price(cg, db_con, day, month, year):
     db_con.commit()
     return price
 
+
 def get_db():
+    """Return database connection object."""
     db_con = sqlite3.connect(".pricedata_%s.db" % (CURRENCY,))
     db_con.execute("""CREATE TABLE IF NOT EXISTS Price(
 Timestamp INT PRIMARY KEY NOT NULL,
 Price FLOAT NOT NULL);
 """)
     return db_con
+
 
 def get_rewards(filename):
     db_con = get_db()
@@ -71,6 +83,7 @@ def get_rewards(filename):
                     rewards[year] += usd
     return rewards
 
+
 def main():
     if len(sys.argv) < 2:
         print("Please specify input csv file")
@@ -80,6 +93,7 @@ def main():
     for year, rewards in rewards.items():
         print("%d: %f %s" % (year, rewards, CURRENCY.upper()))
     return 0
+
 
 if __name__ == "__main__":
     ret = main()
