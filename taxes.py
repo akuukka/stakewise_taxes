@@ -61,12 +61,14 @@ def get_rewards(filename):
         lines = [line.rstrip() for line in file.readlines()[1:]]
         for line in lines:
             line = line.split(',')
-            pattern = '^([0-9]+)-([0-9]+)-([0-9]+)'
-            result = re.search(pattern, line[0])
-            year = int(result.group(1))
-            month = int(result.group(2))
-            day = int(result.group(3))
-            eth = float(line[1])
+            pattern = '^([0-9]+)/([0-9]+)/([0-9]+)'
+            result = re.search(pattern, line[2])
+            year = int(result.group(3))
+            month = int(result.group(1))
+            day = int(result.group(2))
+            #print("day: %d month: %d year: %d" % (day, month, year))
+            eth = float(line[0])
+            #print(eth)
             if eth > 0:
                 price = None
                 while not price:
